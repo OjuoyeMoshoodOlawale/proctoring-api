@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Data and Display in Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Data Table</h1>
+    
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Body</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here dynamically -->
+        </tbody>
+    </table>
+    <form action="http://localhost:3000/login" method="post">
+        <input type="text" name="username">
+        <input type="text" name="password">
+        <input type="submit">
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchDataAndPopulateTable();
+        });
+
+        async function fetchDataAndPopulateTable() {
+            try {
+                const response = await fetch('http://localhost:3000/api/exam');
+                const data = await response.json();
+                
+                const tableBody = document.querySelector('#dataTable tbody');
+
+                data.forEach(item => {
+                    const row = tableBody.insertRow();
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+
+                    cell1.textContent = '';
+                    cell2.textContent = '';
+                    cell3.textContent = '';
+                });             
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        alert(1)
+    </script>
+
+</body>
+</html>

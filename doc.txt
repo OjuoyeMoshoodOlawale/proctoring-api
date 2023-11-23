@@ -1,0 +1,16 @@
+LOGIN 
+LOGOUT
+GET USERS LIST
+REGISTER USER
+
+EXAM
+INSERT QUESTION
+API URL:  /api/exam
+Method :POST
+{"question":"" //question,
+  "opt1":"" //options ,
+  "opt2":"",
+  "opt3":" ",
+  "opt4":"",
+  "answer":""
+}

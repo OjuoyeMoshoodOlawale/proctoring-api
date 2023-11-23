@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-time Image Capture and ML Comparison</title>
+  <style>
+    #video {
+      width: 100%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay></video>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <!-- Replace 'SERVER_IMAGE_URL' with the actual URL of the image on the server -->
+  <img id="serverImage" src="SERVER_IMAGE_URL" style="display:none;">
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/similarity"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      const serverImage = document.getElementById('serverImage');
+
+      // Load the pre-trained model
+      await tf.similarity.load();
+
+      // Get user media
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+
+          // Capture and compare image every 10 seconds
+          setInterval(() => {
+            captureAndCompareImage();
+          }, 10000);
+        })
+        .catch((error) => {
+          console.error('Error accessing camera:', error);
+        });
+
+      async function captureAndCompareImage() {
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw video frame onto canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get data URL of the captured image
+        const capturedImageDataURL = canvas.toDataURL('image/png');
+
+        // Get data URL of the server image
+        const serverImageDataURL = 'WIN_20231029_04_55_38_Pro.jpg';
+
+        // Compare the captured image with the server image using TensorFlow.js similarity model
+        const similarityModel = await tf.similarity.load();
+        const similarity = await similarityModel.compare([capturedImageDataURL], [serverImageDataURL]);
+
+        // You can adjust the threshold based on your requirements
+        const similarityThreshold = 0.9;
+
+        if (similarity > similarityThreshold) {
+          alert('Images are similar!');
+        } else {
+          alert('Images are different!');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
